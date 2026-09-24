@@ -30,6 +30,17 @@ class DatabaseSeeder extends Seeder
         
         $admin->assignRole($adminRole);
 
+        // Create Default Petugas User
+        $petugas = User::firstOrCreate([
+            'email' => 'petugas@gerbangcek.com',
+        ], [
+            'name' => 'Petugas Scan',
+            'password' => bcrypt('password'),
+            'role' => 'petugas',
+        ]);
+        
+        $petugas->assignRole($petugasRole);
+
         // Seed data kendaraan dan pengemudi dari Excel
         $this->call([
             KendaraanSeeder::class,

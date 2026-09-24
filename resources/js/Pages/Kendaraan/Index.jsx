@@ -1,10 +1,12 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router } from '@inertiajs/react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Modal from '@/Components/Modal';
+import { QRCodeSVG } from 'qrcode.react';
 
 export default function Index({ auth, kendaraans, flash, filters, kategoris }) {
     const [selectedVehicle, setSelectedVehicle] = useState(null);
+    const [qrData, setQrData] = useState(null);
     const [search, setSearch] = useState(filters?.search || '');
     const [kategori, setKategori] = useState(filters?.kategori || '');
 
@@ -117,6 +119,12 @@ export default function Index({ auth, kendaraans, flash, filters, kategoris }) {
                                                         </button>
                                                     </td>
                                                     <td className="p-3 border-b text-center space-x-2">
+                                                        <button
+                                                            onClick={() => setQrData(k)}
+                                                            className="text-green-600 hover:underline"
+                                                        >
+                                                            Cetak QR
+                                                        </button>
                                                         <Link
                                                             href={route('kendaraan.edit', k.id)}
                                                             className="text-blue-600 hover:underline"
@@ -209,6 +217,49 @@ export default function Index({ auth, kendaraans, flash, filters, kategoris }) {
                             className="px-4 py-2 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 text-sm font-medium transition-colors"
                         >
                             Tutup
+                        </button>
+                    </div>
+                </div>
+            </Modal>
+
+            {/* Modal Cetak QR Code */}
+            <Modal show={qrData !== null} onClose={() => setQrData(null)} maxWidth="sm">
+                <div className="p-6 text-center">
+                    <h2 className="text-lg font-bold text-gray-900 mb-2">QR Code Kendaraan</h2>
+                    <p className="text-sm border-b pb-4 mb-4 font-mono text-gray-600">{qrData?.nomor_kendaraan}</p>
+                    
+                    <div className="flex justify-center bg-white p-4" id="printable-qr">
+                        {qrData && (
+                            <div className="text-center" style={{ width: '200px' }}>
+                                <QRCodeSVG 
+                                    value={window.location.origin + '/scan/' + qrData.kode_unik} 
+                                    size={200}
+                                />
+                                <p className="mt-2 font-mono font-bold text-sm text-black uppercase">{qrData.nomor_kendaraan}</p>
+                                <p className="text-xs text-gray-500">Scan untuk Validasi Dishub</p>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="mt-6 flex justify-between">
+                        <button
+                            onClick={() => setQrData(null)}
+                            className="px-4 py-2 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 text-sm font-medium transition-colors"
+                        >
+                            Tutup
+                        </button>
+                        <button
+                            onClick={() => {
+                                const printContent = document.getElementById('printable-qr').innerHTML;
+                                const originalContent = document.body.innerHTML;
+                                document.body.innerHTML = printContent;
+                                window.print();
+                                document.body.innerHTML = originalContent;
+                                window.location.reload(); 
+                            }}
+                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium transition-colors"
+                        >
+                            🖨️ Cetak Sekarang
                         </button>
                     </div>
                 </div>

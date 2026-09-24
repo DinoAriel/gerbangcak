@@ -1,58 +1,209 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# GerbangCak — Sistem Registrasi & Validasi Kendaraan Angkutan
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Sistem berbasis web untuk verifikasi kendaraan dan pengemudi menggunakan **QR Code** oleh Dinas Perhubungan. Dibangun dengan Laravel 13, Inertia.js, dan React.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🚀 Fitur Utama
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+| Fitur | Role |
+|---|---|
+| Manajemen data kendaraan & pengemudi | Super Admin |
+| Import data dari Excel | Super Admin |
+| Generate & cetak QR Code kendaraan | Super Admin |
+| Live Scanner kamera untuk validasi lapangan | Petugas |
+| Halaman hasil scan dengan info kendaraan & driver | Admin & Petugas |
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## ⚙️ Kebutuhan Sistem
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Pastikan semua software berikut sudah terinstall di komputer Anda:
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+| Software | Versi Minimum | Cek dengan |
+|---|---|---|
+| **PHP** | 8.2+ | `php -v` |
+| **Composer** | 2.x | `composer -V` |
+| **Node.js** | 18+ | `node -v` |
+| **NPM** | 9+ | `npm -v` |
+| **MySQL** | 8.x | via XAMPP/Laragon |
+| **Git** | - | `git --version` |
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+> **Rekomendasi:** Gunakan [Laragon](https://laragon.org/) (Windows) karena sudah include PHP, MySQL, dan Composer sekaligus.
 
-## Agentic Development
+---
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## 📦 Cara Instalasi & Menjalankan
+
+### Langkah 1 — Clone atau Download Project
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+git clone <url-repository-anda> gerbangcak
+cd gerbangcak
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+---
 
-## Contributing
+### Langkah 2 — Install Dependensi PHP
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+composer install
+```
 
-## Code of Conduct
+---
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Langkah 3 — Install Dependensi Node.js / NPM
 
-## Security Vulnerabilities
+```bash
+npm install --legacy-peer-deps
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+---
 
-## License
+### Langkah 4 — Salin & Konfigurasi File `.env`
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+cp .env.example .env
+```
+
+Buka file `.env` dan sesuaikan bagian berikut:
+
+```env
+APP_NAME=GerbangCak
+APP_URL=http://localhost:8000
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=gerbangcek       # Nama database MySQL Anda
+DB_USERNAME=root              # Username MySQL (default: root)
+DB_PASSWORD=                  # Password MySQL (kosong jika pakai Laragon default)
+```
+
+---
+
+### Langkah 5 — Generate Application Key
+
+```bash
+php artisan key:generate
+```
+
+---
+
+### Langkah 6 — Buat Database
+
+Buka **phpMyAdmin** (atau MySQL client lain) dan buat database baru bernama:
+```
+gerbangcek
+```
+
+---
+
+### Langkah 7 — Jalankan Migrasi & Seeder
+
+Perintah ini akan membuat semua tabel dan mengisi data awal (akun Admin & Petugas):
+
+```bash
+php artisan migrate --seed
+```
+
+> ⚠️ Jika ingin **reset ulang** database dari nol (hapus semua data lama):
+> ```bash
+> php artisan migrate:fresh --seed
+> ```
+
+---
+
+### Langkah 8 — Jalankan Server
+
+Buka **2 terminal terpisah** dan jalankan masing-masing:
+
+**Terminal 1 — Laravel Backend:**
+```bash
+php artisan serve
+```
+
+**Terminal 2 — Vite Frontend (React):**
+```bash
+npm run dev
+```
+
+Aplikasi sekarang dapat diakses di: **[http://localhost:8000](http://localhost:8000)**
+
+---
+
+## 🔑 Akun Default
+
+| Role | Email | Password |
+|---|---|---|
+| **Super Admin** | `admin@gerbangcek.com` | `password` |
+| **Petugas Scan** | `petugas@gerbangcek.com` | `password` |
+
+> ⚠️ Segera ganti password setelah login pertama kali.
+
+---
+
+## 📱 Testing Scanner dari HP (Opsional)
+
+Fitur kamera scanner membutuhkan **HTTPS** untuk berjalan di browser HP. Gunakan Localtunnel untuk membuat tunnel sementara:
+
+**1. Build asset terlebih dahulu:**
+```bash
+npm run build
+```
+
+**2. Jalankan server Laravel:**
+```bash
+php artisan serve
+```
+
+**3. Buka tunnel di terminal baru:**
+```bash
+npx localtunnel --port 8000
+```
+
+**4. Salin URL `https://....loca.lt` yang muncul**, lalu update di `.env`:
+```env
+APP_URL=https://xxxx-xxxx.loca.lt
+```
+
+**5. Clear config & build ulang:**
+```bash
+php artisan config:clear
+npm run build
+```
+
+**6. Buka URL tunnel di HP**, klik "Click to Continue" jika diminta, lalu login sebagai **Petugas Scan**.
+
+---
+
+## 📁 Struktur Role & Akses Halaman
+
+```
+/ (root)              → Halaman Welcome (publik)
+/dashboard            → Dashboard (semua user login)
+/pengemudi            → Manajemen Pengemudi (Admin only)
+/kendaraan            → Manajemen Kendaraan + Cetak QR (Admin only)
+/import               → Import Excel (Admin only)
+/petugas/scanner      → Kamera Live Scanner (Petugas only)
+/scan/{kode_unik}     → Hasil Scan Validasi (Admin & Petugas)
+```
+
+---
+
+## 🛠️ Tech Stack
+
+- **Backend:** Laravel 13, Spatie Permission
+- **Frontend:** React 18, Inertia.js, Tailwind CSS
+- **Build Tool:** Vite
+- **QR Code (Generate):** qrcode.react
+- **QR Code (Scan):** html5-qrcode
+- **Database:** MySQL
+
+---
+
+## 📝 Catatan
+
+- Data kendaraan dan pengemudi dapat diimport dari file Excel melalui menu **Import** di panel Admin.
+- QR Code kendaraan di-generate otomatis saat kendaraan ditambahkan dan dapat dicetak dari tabel **Manajemen Kendaraan** (tombol "Cetak QR").
+- Setiap kendaraan memiliki `kode_unik` yang menjadi identifier pada URL hasil scan.

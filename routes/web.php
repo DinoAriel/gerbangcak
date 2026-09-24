@@ -33,6 +33,17 @@ Route::middleware('auth')->group(function () {
         Route::get('/import', [App\Http\Controllers\ImportController::class, 'showForm'])->name('import.form');
         Route::post('/import/kendaraan', [App\Http\Controllers\ImportController::class, 'import'])->name('import.kendaraan');
     });
+    // Akses Kamera (Khusus Petugas)
+    Route::middleware('role:petugas')->group(function () {
+        Route::get('/petugas/scanner', function () {
+            return Inertia::render('Scanner/Camera');
+        })->name('scanner.camera');
+    });
+
+    // Fitur Hasil Scan URL (Terkunci untuk Auth - Admin & Petugas)
+    Route::middleware('role:admin|petugas')->group(function () {
+        Route::get('/scan/{kode_unik}', [App\Http\Controllers\ScannerController::class, 'scan'])->name('scan.result');
+    });
 });
 
 require __DIR__.'/auth.php';
