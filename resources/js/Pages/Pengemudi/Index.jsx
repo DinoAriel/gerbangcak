@@ -1,7 +1,20 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router } from '@inertiajs/react';
+import { useState, useEffect } from 'react';
 
-export default function Index({ auth, pengemudis, flash }) {
+export default function Index({ auth, pengemudis, flash, filters }) {
+    const [search, setSearch] = useState(filters?.search || '');
+
+    useEffect(() => {
+        const delaySearch = setTimeout(() => {
+            if (search !== (filters?.search || '')) {
+                router.get(route('pengemudi.index'), { search }, { preserveState: true, replace: true, preserveScroll: true });
+            }
+        }, 300);
+
+        return () => clearTimeout(delaySearch);
+    }, [search]);
+
     const handleDelete = (id, nama) => {
         if (confirm(`Yakin ingin menghapus pengemudi "${nama}"?`)) {
             router.delete(route('pengemudi.destroy', id));
@@ -25,21 +38,32 @@ export default function Index({ auth, pengemudis, flash }) {
 
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6">
-                            <div className="flex justify-between items-center mb-6">
+                            <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
                                 <h3 className="text-lg font-bold text-gray-700">Daftar Pengemudi</h3>
-                                <Link
-                                    href={route('pengemudi.create')}
-                                    className="px-4 py-2 bg-blue-900 text-white rounded-lg hover:bg-blue-800 transition-colors text-sm font-medium"
-                                >
-                                    + Tambah Pengemudi
-                                </Link>
+                                
+                                <div className="flex gap-2 w-full sm:w-auto">
+                                    <input 
+                                        type="text" 
+                                        value={search}
+                                        onChange={(e) => setSearch(e.target.value)}
+                                        placeholder="Cari nama atau SIM..." 
+                                        className="w-full sm:w-64 border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm"
+                                    />
+                                    <Link
+                                        href={route('pengemudi.create')}
+                                        className="px-4 py-2 bg-blue-900 text-white rounded-lg hover:bg-blue-800 transition-colors text-sm font-medium whitespace-nowrap"
+                                    >
+                                        + Tambah
+                                    </Link>
+                                </div>
                             </div>
 
                             <div className="overflow-x-auto">
                                 <table className="w-full text-left text-sm border-collapse">
                                     <thead>
                                         <tr className="bg-blue-900 text-white">
-                                            <th className="p-3 rounded-tl-lg">Nama</th>
+                                            <th className="p-3 rounded-tl-lg">Foto</th>
+                                            <th className="p-3">Nama</th>
                                             <th className="p-3">No. HP</th>
                                             <th className="p-3">No. SIM</th>
                                             <th className="p-3">Status</th>
@@ -56,6 +80,17 @@ export default function Index({ auth, pengemudis, flash }) {
                                         ) : (
                                             pengemudis.data.map((p, i) => (
                                                 <tr key={p.id} className={i % 2 === 0 ? 'bg-white hover:bg-blue-50' : 'bg-gray-50 hover:bg-blue-50'}>
+                                                    <td className="p-3 border-b">
+                                                        {p.has_foto ? (
+                                                            <a href={route('pengemudi.foto', p.id)} target="_blank" rel="noopener noreferrer">
+                                                                <img src={route('pengemudi.foto', p.id)} alt={p.nama} className="w-12 h-12 rounded-full object-cover border border-gray-300 hover:opacity-80 transition-opacity" />
+                                                            </a>
+                                                        ) : (
+                                                            <div className="w-12 h-12 rounded-full bg-gray-200 border border-gray-300 flex items-center justify-center text-gray-500 text-xs shadow-sm">
+                                                                No Pic
+                                                            </div>
+                                                        )}
+                                                    </td>
                                                     <td className="p-3 border-b font-medium">{p.nama}</td>
                                                     <td className="p-3 border-b">{p.no_hp}</td>
                                                     <td className="p-3 border-b">{p.no_sim}</td>
@@ -90,6 +125,34 @@ export default function Index({ auth, pengemudis, flash }) {
                                     </tbody>
                                 </table>
                             </div>
+                            
+                            {/* Pagination */}
+                            {pengemudis.links && pengemudis.links.length > 3 && (
+                                <div className="flex justify-center mt-6">
+                                    <ul className="flex space-x-1 border rounded-lg overflow-hidden border-gray-300">
+                                        {pengemudis.links.map((link, index) => (
+                                            <li key={index}>
+                                                {link.url ? (
+                                                    <Link
+                                                        href={link.url}
+                                                        className={`block px-4 py-2 text-sm font-medium transition-colors ${
+                                                            link.active
+                                                                ? 'bg-blue-900 text-white'
+                                                                : 'bg-white text-gray-700 border-x border-gray-200 hover:bg-blue-50'
+                                                        }`}
+                                                        dangerouslySetInnerHTML={{ __html: link.label }}
+                                                    />
+                                                ) : (
+                                                    <span
+                                                        className="block px-4 py-2 text-sm font-medium bg-gray-50 text-gray-400 border-x border-gray-200 cursor-not-allowed"
+                                                        dangerouslySetInnerHTML={{ __html: link.label }}
+                                                    />
+                                                )}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

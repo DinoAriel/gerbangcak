@@ -10,12 +10,32 @@ use Inertia\Inertia;
 
 class KendaraanController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $kendaraans = Kendaraan::with('pengemudis')->latest()->paginate(10);
+        $search = $request->input('search');
+        $kategori = $request->input('kategori');
+
+        $kendaraans = Kendaraan::with('pengemudis')
+            ->when($search, function ($query, $search) {
+                $query->where(function($q) use ($search) {
+                    $q->where('nomor_kendaraan', 'like', "%{$search}%")
+                      ->orWhere('perusahaan', 'like', "%{$search}%")
+                      ->orWhere('brand', 'like', "%{$search}%");
+                });
+            })
+            ->when($kategori, function ($query, $kategori) {
+                $query->where('kategori', $kategori);
+            })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        $kategoris = Kendaraan::select('kategori')->distinct()->orderBy('kategori')->pluck('kategori');
 
         return Inertia::render('Kendaraan/Index', [
             'kendaraans' => $kendaraans,
+            'kategoris' => $kategoris,
+            'filters' => $request->only(['search', 'kategori']),
         ]);
     }
 

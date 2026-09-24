@@ -29,5 +29,11 @@ class DatabaseSeeder extends Seeder
         ]);
         
         $admin->assignRole($adminRole);
+
+        // Seed data kendaraan dan pengemudi dari Excel
+        $this->call([
+            KendaraanSeeder::class,
+            PengemudiSeeder::class,
+        ]);
     }
 }

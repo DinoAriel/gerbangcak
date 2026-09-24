@@ -11,12 +11,18 @@ use Intervention\Image\ImageManager;
 
 class PengemudiController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $pengemudis = Pengemudi::latest()->paginate(10);
+        $search = $request->input('search');
+
+        $pengemudis = Pengemudi::when($search, function ($query, $search) {
+            $query->where('nama', 'like', "%{$search}%")
+                  ->orWhere('no_sim', 'like', "%{$search}%");
+        })->latest()->paginate(10)->withQueryString();
 
         return Inertia::render('Pengemudi/Index', [
             'pengemudis' => $pengemudis,
+            'filters' => $request->only(['search']),
         ]);
     }
 
@@ -96,6 +102,17 @@ class PengemudiController extends Controller
         $pengemudi->delete();
 
         return redirect()->route('pengemudi.index')->with('success', 'Pengemudi berhasil dihapus.');
+    }
+
+    public function foto($id)
+    {
+        $pengemudi = Pengemudi::findOrFail($id);
+
+        if (!$pengemudi->foto) {
+            abort(404);
+        }
+
+        return response($pengemudi->foto)->header('Content-Type', $pengemudi->foto_mime ?? 'image/jpeg');
     }
 
     /**

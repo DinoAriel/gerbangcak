@@ -25,6 +25,7 @@ Route::middleware('auth')->group(function () {
     
     // M2 Data Master (Admin Only)
     Route::middleware('role:admin')->group(function () {
+        Route::get('pengemudi/{pengemudi}/foto', [App\Http\Controllers\PengemudiController::class, 'foto'])->name('pengemudi.foto');
         Route::resource('pengemudi', App\Http\Controllers\PengemudiController::class);
         Route::resource('kendaraan', App\Http\Controllers\KendaraanController::class);
         
