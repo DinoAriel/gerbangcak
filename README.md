@@ -66,19 +66,15 @@ npm install --legacy-peer-deps
 cp .env.example .env
 ```
 
-Buka file `.env` dan sesuaikan bagian berikut:
+Buka file `.env` dan sesuaikan konfigurasi berikut dengan kondisi komputer Anda:
 
-```env
-APP_NAME=GerbangCak
-APP_URL=http://localhost:8000
+- `APP_NAME` — Nama aplikasi (contoh: GerbangCak)
+- `APP_URL` — URL lokal server Anda (contoh: `http://localhost:8000`)
+- `DB_DATABASE` — Nama database MySQL yang akan digunakan
+- `DB_USERNAME` — Username MySQL Anda
+- `DB_PASSWORD` — Password MySQL Anda (kosongkan jika tidak ada password)
 
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=gerbangcek       # Nama database MySQL Anda
-DB_USERNAME=root              # Username MySQL (default: root)
-DB_PASSWORD=                  # Password MySQL (kosong jika pakai Laragon default)
-```
+> 🔒 **Jangan pernah membagikan isi file `.env` kepada siapapun** karena berisi informasi rahasia seperti APP_KEY dan kredensial database.
 
 ---
 
