@@ -2,6 +2,9 @@ import React from 'react';
 import { Head, Link } from '@inertiajs/react';
 
 export default function ScanResult({ kendaraan }) {
+    const [searchDriver, setSearchDriver] = React.useState('');
+    const [currentPage, setCurrentPage] = React.useState(1);
+
     // Data dinamis dari prop atau fallback ke data statis
     const dataKendaraan = kendaraan || {
         kategori: 'Angkutan Sewa',
@@ -40,6 +43,19 @@ export default function ScanResult({ kendaraan }) {
             },
         ],
     };
+
+    const driversPerPage = 5;
+    const showSearchAndPagination = dataKendaraan.drivers.length > 5;
+
+    const filteredDrivers = dataKendaraan.drivers.filter(d => 
+        d.nama.toLowerCase().includes(searchDriver.toLowerCase())
+    );
+
+    const totalPages = Math.ceil(filteredDrivers.length / driversPerPage);
+    const startIndex = (currentPage - 1) * driversPerPage;
+    const displayedDrivers = showSearchAndPagination 
+        ? filteredDrivers.slice(startIndex, startIndex + driversPerPage) 
+        : dataKendaraan.drivers;
 
     return (
         <div className="bg-slate-100 text-slate-800 font-sans min-h-screen flex justify-center selection:bg-indigo-100 selection:text-indigo-800 relative">
@@ -131,9 +147,9 @@ export default function ScanResult({ kendaraan }) {
                                 <span className="text-slate-800 font-bold text-sm block">{dataKendaraan.tahun_pembuatan}</span>
                             </div>
                             <div className="bg-slate-50/80 p-3 rounded-xl border border-slate-100">
-                                <span className="text-slate-400 block text-[11px] mb-0.5 font-medium">Masa Berlaku Operasional</span>
+                                <span className="text-slate-400 block text-[11px] mb-0.5 font-medium">Kategori Kendaraan</span>
                                 <span className="text-emerald-700 font-bold text-sm flex items-center space-x-1">
-                                    <span>{dataKendaraan.masa_berlaku}</span>
+                                    <span className="uppercase">{dataKendaraan.kategori}</span>
                                 </span>
                             </div>
                         </div>
@@ -148,40 +164,83 @@ export default function ScanResult({ kendaraan }) {
                             </div>
                         </div>
 
-                        {dataKendaraan.drivers.map((driver) => (
-                            <article key={driver.id} className="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 transition hover:shadow-md">
-                                <div className="flex items-center gap-8">
-                                    {/* Foto Driver */}
-                                    {driver.foto ? (
-                                        <img
-                                            alt={`Foto resmi driver ${driver.nama}`}
-                                            className="w-16 h-16 object-cover rounded-[14px] shadow-sm flex-shrink-0 bg-slate-100"
-                                            src={driver.foto}
-                                        />
-                                    ) : (
-                                        <div className="w-16 h-16 rounded-[14px] shadow-sm flex-shrink-0 bg-slate-200 border border-slate-300 flex items-center justify-center text-slate-500 font-bold text-xl">
-                                            {driver.nama ? driver.nama.substring(0, 2).toUpperCase() : 'DR'}
-                                        </div>
-                                    )}
+                        {showSearchAndPagination && (
+                            <div className="mb-4">
+                                <input
+                                    type="text"
+                                    placeholder="Cari nama pengemudi..."
+                                    value={searchDriver}
+                                    onChange={(e) => {
+                                        setSearchDriver(e.target.value);
+                                        setCurrentPage(1); // Reset to page 1 on search
+                                    }}
+                                    className="w-full bg-white border border-slate-200 text-sm rounded-xl px-4 py-2 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm"
+                                />
+                            </div>
+                        )}
 
-                                    {/* Info Nama & Jenis SIM */}
-                                    <div className="flex-1 min-w-0 flex flex-col justify-center">
-                                        <div className="flex items-start justify-between gap-2">
-                                            <div className="flex flex-col">
-                                                <h3 className="text-sm font-bold text-slate-900 tracking-tight leading-tight">{driver.nama}</h3>
-                                                <p className="text-[11px] text-slate-500 mt-1">{driver.sim} • Terakreditasi</p>
+                        {displayedDrivers.length === 0 ? (
+                            <div className="text-center py-6 text-sm text-slate-500 bg-white rounded-2xl border border-slate-200">
+                                Tidak ada pengemudi yang cocok.
+                            </div>
+                        ) : (
+                            displayedDrivers.map((driver) => (
+                                <article key={driver.id} className="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 transition hover:shadow-md mb-3">
+                                    <div className="flex items-center gap-8">
+                                        {/* Foto Driver */}
+                                        {driver.foto ? (
+                                            <img
+                                                alt={`Foto resmi driver ${driver.nama}`}
+                                                className="w-16 h-16 object-cover rounded-[14px] shadow-sm flex-shrink-0 bg-slate-100"
+                                                src={driver.foto}
+                                            />
+                                        ) : (
+                                            <div className="w-16 h-16 rounded-[14px] shadow-sm flex-shrink-0 bg-slate-200 border border-slate-300 flex items-center justify-center text-slate-500 font-bold text-xl">
+                                                {driver.nama ? driver.nama.substring(0, 2).toUpperCase() : 'DR'}
                                             </div>
-                                            <span className={`shrink-0 text-[9px] uppercase font-bold px-2 py-1 rounded-md border tracking-wider mt-0.5 ${driver.isActive
-                                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                                                : 'bg-slate-50 text-slate-500 border-slate-200'
-                                                }`}>
-                                                {driver.status}
-                                            </span>
+                                        )}
+
+                                        {/* Info Nama & Jenis SIM */}
+                                        <div className="flex-1 min-w-0 flex flex-col justify-center">
+                                            <div className="flex items-start justify-between gap-2">
+                                                <div className="flex flex-col">
+                                                    <h3 className="text-sm font-bold text-slate-900 tracking-tight leading-tight">{driver.nama}</h3>
+                                                    <p className="text-[11px] text-slate-500 mt-1">{driver.sim} • Terakreditasi</p>
+                                                </div>
+                                                <span className={`shrink-0 text-[9px] uppercase font-bold px-2 py-1 rounded-md border tracking-wider mt-0.5 ${driver.isActive
+                                                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                                    : 'bg-slate-50 text-slate-500 border-slate-200'
+                                                    }`}>
+                                                    {driver.status}
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </article>
-                        ))}
+                                </article>
+                            ))
+                        )}
+
+                        {showSearchAndPagination && totalPages > 1 && (
+                            <div className="flex items-center justify-between pt-2">
+                                <button
+                                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                    disabled={currentPage === 1}
+                                    className="px-3 py-1.5 text-xs font-semibold bg-white border border-slate-200 rounded-lg shadow-sm disabled:opacity-50 text-slate-600"
+                                >
+                                    Sebelumnya
+                                </button>
+                                <span className="text-xs font-medium text-slate-500">
+                                    Hal {currentPage} dari {totalPages}
+                                </span>
+                                <button
+                                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                                    disabled={currentPage === totalPages}
+                                    className="px-3 py-1.5 text-xs font-semibold bg-white border border-slate-200 rounded-lg shadow-sm disabled:opacity-50 text-slate-600"
+                                >
+                                    Selanjutnya
+                                </button>
+                            </div>
+                        )}
                     </section>
                 </div>
             </main>

@@ -17,7 +17,8 @@ class PengemudiController extends Controller
 
         $pengemudis = Pengemudi::when($search, function ($query, $search) {
             $query->where('nama', 'like', "%{$search}%")
-                  ->orWhere('no_sim', 'like', "%{$search}%");
+                  ->orWhere('no_sim', 'like', "%{$search}%")
+                  ->orWhere('no_ktp', 'like', "%{$search}%");
         })->latest()->paginate(10)->withQueryString();
 
         return Inertia::render('Pengemudi/Index', [
@@ -35,6 +36,7 @@ class PengemudiController extends Controller
     {
         $validated = $request->validate([
             'nama' => 'required|string|max:100',
+            'no_ktp' => 'nullable|string|max:50',
             'no_hp' => 'required|string|max:20',
             'no_sim' => 'required|string|max:30',
             'status' => 'required|string|max:50',
@@ -43,6 +45,7 @@ class PengemudiController extends Controller
 
         $data = [
             'nama' => $validated['nama'],
+            'no_ktp' => $validated['no_ktp'] ?? null,
             'no_hp' => $validated['no_hp'],
             'no_sim' => $validated['no_sim'],
             'status' => $validated['status'],
@@ -62,7 +65,7 @@ class PengemudiController extends Controller
     public function edit(Pengemudi $pengemudi)
     {
         return Inertia::render('Pengemudi/Edit', [
-            'pengemudi' => $pengemudi->only(['id', 'nama', 'no_hp', 'no_sim', 'status']),
+            'pengemudi' => $pengemudi->only(['id', 'nama', 'no_ktp', 'no_hp', 'no_sim', 'status']),
         ]);
     }
 
@@ -70,6 +73,7 @@ class PengemudiController extends Controller
     {
         $validated = $request->validate([
             'nama' => 'required|string|max:100',
+            'no_ktp' => 'nullable|string|max:50',
             'no_hp' => 'required|string|max:20',
             'no_sim' => 'required|string|max:30',
             'status' => 'required|string|max:50',
@@ -78,6 +82,7 @@ class PengemudiController extends Controller
 
         $data = [
             'nama' => $validated['nama'],
+            'no_ktp' => $validated['no_ktp'] ?? null,
             'no_hp' => $validated['no_hp'],
             'no_sim' => $validated['no_sim'],
             'status' => $validated['status'],

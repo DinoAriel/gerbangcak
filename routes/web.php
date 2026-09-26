@@ -23,18 +23,21 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     
+    // Route foto pengemudi - bisa diakses admin & petugas (untuk scan result)
+    Route::get('pengemudi/{pengemudi}/foto', [App\Http\Controllers\PengemudiController::class, 'foto'])->name('pengemudi.foto');
+
     // M2 Data Master (Admin Only)
     Route::middleware('role:admin')->group(function () {
-        Route::get('pengemudi/{pengemudi}/foto', [App\Http\Controllers\PengemudiController::class, 'foto'])->name('pengemudi.foto');
         Route::resource('pengemudi', App\Http\Controllers\PengemudiController::class);
+        Route::get('kendaraan/print-all', [App\Http\Controllers\KendaraanController::class, 'printAll'])->name('kendaraan.print-all');
         Route::resource('kendaraan', App\Http\Controllers\KendaraanController::class);
         
         // Import Excel
         Route::get('/import', [App\Http\Controllers\ImportController::class, 'showForm'])->name('import.form');
         Route::post('/import/kendaraan', [App\Http\Controllers\ImportController::class, 'import'])->name('import.kendaraan');
     });
-    // Akses Kamera (Khusus Petugas)
-    Route::middleware('role:petugas')->group(function () {
+    // Akses Kamera (Khusus Admin & Petugas)
+    Route::middleware('role:admin|petugas')->group(function () {
         Route::get('/petugas/scanner', function () {
             return Inertia::render('Scanner/Camera');
         })->name('scanner.camera');

@@ -17,15 +17,26 @@ class ScannerController extends Controller
 
         // Format the drivers
         $drivers = $kendaraan->pengemudis->map(function ($driver) {
+            // Generate URL foto dengan aman
+            $fotoUrl = null;
+            if ($driver->has_foto) {
+                try {
+                    $fotoUrl = route('pengemudi.foto', $driver->id);
+                } catch (\Exception $e) {
+                    $fotoUrl = null;
+                }
+            }
+
+            $isActive = strtolower($driver->status ?? 'aktif') === 'aktif';
+
             return [
-                'id' => $driver->id,
-                'nik_driver' => $driver->nik,
-                'nama' => $driver->nama,
-                // Using the specific route if has photo, else fallback or empty
-                'foto' => $driver->has_foto ? route('pengemudi.foto', $driver->id) : null,
-                'sim' => 'SIM ' . $driver->jenis_sim, // Assuming jenis_sim field exists, adjust if different
-                'status' => 'AKTIF', // You can use driver's actual status if present
-                'isActive' => true,
+                'id'         => $driver->id,
+                'nik_driver' => $driver->no_sim ?? '-',
+                'nama'       => $driver->nama,
+                'foto'       => $fotoUrl,
+                'sim'        => 'SIM ' . ($driver->no_sim ?? '-'),
+                'status'     => strtoupper($driver->status ?? 'AKTIF'),
+                'isActive'   => $isActive,
             ];
         });
 

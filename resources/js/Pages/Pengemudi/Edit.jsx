@@ -5,6 +5,7 @@ export default function Edit({ auth, pengemudi }) {
     const { data, setData, post, processing, errors } = useForm({
         _method: 'PUT',
         nama: pengemudi.nama ?? '',
+        no_ktp: pengemudi.no_ktp ?? '',
         no_hp: pengemudi.no_hp ?? '',
         no_sim: pengemudi.no_sim ?? '',
         status: pengemudi.status ?? 'Aktif',
@@ -32,6 +33,15 @@ export default function Edit({ auth, pengemudi }) {
                                     className={inputClass(errors.nama)}
                                     value={data.nama}
                                     onChange={e => setData('nama', e.target.value)}
+                                />
+                            </FormField>
+
+                            <FormField label="No. KTP / NIK" error={errors.no_ktp}>
+                                <input
+                                    type="text"
+                                    className={inputClass(errors.no_ktp)}
+                                    value={data.no_ktp}
+                                    onChange={e => setData('no_ktp', e.target.value)}
                                 />
                             </FormField>
 

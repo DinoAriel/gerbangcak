@@ -46,7 +46,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                         </NavLink>
                                     </>
                                 )}
-                                {(user.role === 'petugas') && (
+                                {(user.role === 'petugas' || user.role === 'admin') && (
                                     <NavLink
                                         href={route('scanner.camera')}
                                         active={route().current('scanner.*')}
@@ -158,7 +158,7 @@ export default function AuthenticatedLayout({ header, children }) {
                         >
                             Dashboard
                         </ResponsiveNavLink>
-                        {(user.role === 'petugas') && (
+                        {(user.role === 'petugas' || user.role === 'admin') && (
                             <ResponsiveNavLink
                                 href={route('scanner.camera')}
                                 active={route().current('scanner.*')}

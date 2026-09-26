@@ -118,4 +118,21 @@ class KendaraanController extends Controller
 
         return redirect()->route('kendaraan.index')->with('success', 'Kendaraan berhasil dihapus.');
     }
+
+    public function printAll(Request $request)
+    {
+        $kategori = $request->input('kategori');
+
+        $query = Kendaraan::query();
+        if ($kategori) {
+            $query->where('kategori', $kategori);
+        }
+        
+        $kendaraans = $query->orderBy('nomor_kendaraan')->get();
+        
+        return Inertia::render('Kendaraan/PrintAll', [
+            'kendaraans' => $kendaraans,
+            'kategori' => $kategori ?: 'Semua Kategori',
+        ]);
+    }
 }

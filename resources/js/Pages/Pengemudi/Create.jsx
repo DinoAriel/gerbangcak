@@ -4,6 +4,7 @@ import { Head, Link, useForm } from '@inertiajs/react';
 export default function Create({ auth }) {
     const { data, setData, post, processing, errors } = useForm({
         nama: '',
+        no_ktp: '',
         no_hp: '',
         no_sim: '',
         status: 'Aktif',
@@ -32,6 +33,16 @@ export default function Create({ auth }) {
                                     value={data.nama}
                                     onChange={e => setData('nama', e.target.value)}
                                     placeholder="Nama pengemudi"
+                                />
+                            </FormField>
+
+                            <FormField label="No. KTP / NIK" error={errors.no_ktp}>
+                                <input
+                                    type="text"
+                                    className={inputClass(errors.no_ktp)}
+                                    value={data.no_ktp}
+                                    onChange={e => setData('no_ktp', e.target.value)}
+                                    placeholder="Nomor KTP (Opsional)"
                                 />
                             </FormField>
 
