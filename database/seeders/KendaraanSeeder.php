@@ -9,9 +9,9 @@ class KendaraanSeeder extends Seeder
 {
     public function run(): void
     {
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
         DB::table('kendaraans')->truncate();
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        DB::statement('SET FOREIGN_KEY_CHECKS=1');
 
         $data = [
             [
@@ -1515,26 +1515,6 @@ class KendaraanSeeder extends Seeder
                 'updated_at'      => now(),
             ],
             [
-                'kode_unik'       => 'KND-L1079UE',
-                'kategori'        => 'ANGKUTAN TAKSI',
-                'perusahaan'      => 'PT PUSAKA NURI UTAMA',
-                'brand'           => 'BLUE BIRD',
-                'nomor_kendaraan' => 'L 1079 UE',
-                'tahun_pembuatan' => 2023,
-                'created_at'      => now(),
-                'updated_at'      => now(),
-            ],
-            [
-                'kode_unik'       => 'KND-L1476UH',
-                'kategori'        => 'ANGKUTAN TAKSI',
-                'perusahaan'      => 'PT PUSAKA NURI UTAMA',
-                'brand'           => 'BLUE BIRD',
-                'nomor_kendaraan' => 'L 1476 UH',
-                'tahun_pembuatan' => 2025,
-                'created_at'      => now(),
-                'updated_at'      => now(),
-            ],
-            [
                 'kode_unik'       => 'KND-L1478UH',
                 'kategori'        => 'ANGKUTAN TAKSI',
                 'perusahaan'      => 'PT PUSAKA NURI UTAMA',
@@ -1580,6 +1560,26 @@ class KendaraanSeeder extends Seeder
                 'perusahaan'      => 'PT PUSAKA NURI UTAMA',
                 'brand'           => 'BLUE BIRD',
                 'nomor_kendaraan' => 'L 1169 UH',
+                'tahun_pembuatan' => 2025,
+                'created_at'      => now(),
+                'updated_at'      => now(),
+            ],
+            [
+                'kode_unik'       => 'KND-L1079UE',
+                'kategori'        => 'ANGKUTAN TAKSI',
+                'perusahaan'      => 'PT PUSAKA NURI UTAMA',
+                'brand'           => 'BLUE BIRD',
+                'nomor_kendaraan' => 'L 1079 UE',
+                'tahun_pembuatan' => 2023,
+                'created_at'      => now(),
+                'updated_at'      => now(),
+            ],
+            [
+                'kode_unik'       => 'KND-L1476UH',
+                'kategori'        => 'ANGKUTAN TAKSI',
+                'perusahaan'      => 'PT PUSAKA NURI UTAMA',
+                'brand'           => 'BLUE BIRD',
+                'nomor_kendaraan' => 'L 1476 UH',
                 'tahun_pembuatan' => 2025,
                 'created_at'      => now(),
                 'updated_at'      => now(),
