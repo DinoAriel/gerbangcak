@@ -1,4 +1,3 @@
-import ApplicationLogo from '@/Components/ApplicationLogo';
 import Dropdown from '@/Components/Dropdown';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
@@ -19,7 +18,11 @@ export default function AuthenticatedLayout({ header, children }) {
                         <div className="flex">
                             <div className="flex shrink-0 items-center">
                                 <Link href="/">
-                                    <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
+                                    <img
+                                        src="/Juanda_International_Airport_Logo.png"
+                                        alt="Logo Juanda International Airport"
+                                        className="h-9 w-auto object-contain"
+                                    />
                                 </Link>
                             </div>
 
@@ -58,7 +61,7 @@ export default function AuthenticatedLayout({ header, children }) {
                         </div>
 
                         <div className="hidden sm:ms-6 sm:flex sm:items-center">
-                            <div className="relative ms-3">
+                            <div className="relative ms-3 flex items-center">
                                 <Dropdown>
                                     <Dropdown.Trigger>
                                         <span className="inline-flex rounded-md">
@@ -102,7 +105,12 @@ export default function AuthenticatedLayout({ header, children }) {
                             </div>
                         </div>
 
-                        <div className="-me-2 flex items-center sm:hidden">
+                        <div className="-me-2 flex items-center gap-2 sm:hidden">
+                            <img
+                                src="/Juanda_International_Airport_Logo.png"
+                                alt="Logo Juanda International Airport"
+                                className="h-8 w-auto object-contain"
+                            />
                             <button
                                 onClick={() =>
                                     setShowingNavigationDropdown(
@@ -158,6 +166,22 @@ export default function AuthenticatedLayout({ header, children }) {
                         >
                             Dashboard
                         </ResponsiveNavLink>
+                        {user.role === 'admin' && (
+                            <>
+                                <ResponsiveNavLink
+                                    href={route('pengemudi.index')}
+                                    active={route().current('pengemudi.*')}
+                                >
+                                    Pengemudi
+                                </ResponsiveNavLink>
+                                <ResponsiveNavLink
+                                    href={route('kendaraan.index')}
+                                    active={route().current('kendaraan.*')}
+                                >
+                                    Kendaraan
+                                </ResponsiveNavLink>
+                            </>
+                        )}
                         {(user.role === 'petugas' || user.role === 'admin') && (
                             <ResponsiveNavLink
                                 href={route('scanner.camera')}
