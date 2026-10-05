@@ -8,7 +8,7 @@ class Pengemudi extends Model
 {
     protected $guarded = [];
 
-    protected $hidden = ['foto', 'foto_mime'];
+    protected $hidden = ['foto'];
     
     protected $appends = ['has_foto'];
 

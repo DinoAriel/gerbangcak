@@ -27,4 +27,21 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
         );
+
+        // Render halaman error bertema GerbangCak via Inertia (404/403/500, dll)
+        // untuk permintaan HTML biasa (bukan JSON/API).
+        $exceptions->respond(function (\Symfony\Component\HttpFoundation\Response $response, \Throwable $exception, Request $request) {
+            if ($request->is('api/*') || $request->expectsJson() || $request->ajax()) {
+                return $response;
+            }
+
+            $status = $response->getStatusCode();
+            if (in_array($status, [403, 404, 419, 429, 500, 503], true)) {
+                return \Inertia\Inertia::render('Error', ['status' => $status])
+                    ->toResponse($request)
+                    ->setStatusCode($status);
+            }
+
+            return $response;
+        });
     })->create();

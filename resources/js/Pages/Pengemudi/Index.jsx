@@ -4,19 +4,20 @@ import { useState, useEffect } from 'react';
 
 import Modal from '@/Components/Modal';
 
-export default function Index({ auth, pengemudis, flash, filters }) {
+export default function Index({ auth, pengemudis, flash, filters, statuses }) {
     const [search, setSearch] = useState(filters?.search || '');
+    const [status, setStatus] = useState(filters?.status || '');
     const [selectedPengemudi, setSelectedPengemudi] = useState(null);
 
     useEffect(() => {
         const delaySearch = setTimeout(() => {
-            if (search !== (filters?.search || '')) {
-                router.get(route('pengemudi.index'), { search }, { preserveState: true, replace: true, preserveScroll: true });
+            if (search !== (filters?.search || '') || status !== (filters?.status || '')) {
+                router.get(route('pengemudi.index'), { search, status }, { preserveState: true, replace: true, preserveScroll: true });
             }
         }, 300);
 
         return () => clearTimeout(delaySearch);
-    }, [search]);
+    }, [search, status]);
 
     const handleDelete = (id, nama) => {
         if (confirm(`Yakin ingin menghapus pengemudi "${nama}"?`)) {
@@ -52,6 +53,19 @@ export default function Index({ auth, pengemudis, flash, filters }) {
                                         placeholder="Cari nama, KTP, atau SIM..." 
                                         className="w-full sm:w-64 border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm"
                                     />
+                                    <select
+                                        value={status}
+                                        onChange={(e) => setStatus(e.target.value)}
+                                        className="w-full sm:w-40 border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm"
+                                    >
+                                        <option value="">Semua Status</option>
+                                        {(statuses && statuses.length > 0
+                                            ? statuses
+                                            : ['Aktif', 'Tidak Aktif', 'Cuti']
+                                        ).map((s, idx) => (
+                                            <option key={idx} value={s}>{s}</option>
+                                        ))}
+                                    </select>
                                     <Link
                                         href={route('pengemudi.create')}
                                         className="px-4 py-2 bg-blue-900 text-white rounded-lg hover:bg-blue-800 transition-colors text-sm font-medium whitespace-nowrap"

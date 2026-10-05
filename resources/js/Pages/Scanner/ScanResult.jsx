@@ -12,7 +12,6 @@ export default function ScanResult({ kendaraan }) {
         brand: 'AIGO',
         nomor_kendaraan: 'W 1237 LM',
         tahun_pembuatan: '2024',
-        masa_berlaku: 'Aktif s/d 2025',
         drivers: [
             {
                 id: 1,
@@ -46,6 +45,9 @@ export default function ScanResult({ kendaraan }) {
 
     const driversPerPage = 5;
     const showSearchAndPagination = dataKendaraan.drivers.length > 5;
+
+    // Pengemudi yang statusnya Tidak Aktif tidak boleh dipakai; beri penanda bahaya.
+    const inactiveCount = dataKendaraan.drivers.filter((d) => !d.isActive).length;
 
     const filteredDrivers = dataKendaraan.drivers.filter(d => 
         d.nama.toLowerCase().includes(searchDriver.toLowerCase())
@@ -100,7 +102,24 @@ export default function ScanResult({ kendaraan }) {
                     </div>
                 </section>
 
-                {/* Content Scrollable Body */}
+                {/* BEGIN: InactiveDriverWarning */}
+                {inactiveCount > 0 && (
+                    <section aria-label="Peringatan Pengemudi" className="px-4 pt-3">
+                        <div className="rounded-2xl p-4 bg-red-500/10 border border-red-500/30 flex items-start space-x-3">
+                            <div className="w-8 h-8 rounded-lg bg-red-100 text-red-600 flex items-center justify-center shrink-0">
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                                    <path d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p className="text-xs font-bold uppercase tracking-wider text-red-800">Peringatan</p>
+                                <p className="text-sm font-semibold text-red-950 mt-0.5">
+                                    {inactiveCount} pengemudi berstatus Tidak Aktif. Kendaraan ini tidak boleh dioperasikan dengan pengemudi tersebut.
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+                )}
                 <div className="px-4 py-4 space-y-5 flex-1">
 
                     {/* BEGIN: VehicleSummaryCard */}
@@ -209,7 +228,7 @@ export default function ScanResult({ kendaraan }) {
                                                 </div>
                                                 <span className={`shrink-0 text-[9px] uppercase font-bold px-2 py-1 rounded-md border tracking-wider mt-0.5 ${driver.isActive
                                                     ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                                                    : 'bg-slate-50 text-slate-500 border-slate-200'
+                                                    : 'bg-red-50 text-red-700 border-red-200'
                                                     }`}>
                                                     {driver.status}
                                                 </span>

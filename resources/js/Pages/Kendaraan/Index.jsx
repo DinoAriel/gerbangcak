@@ -73,12 +73,6 @@ export default function Index({ auth, kendaraans, flash, filters, kategoris }) {
                                         🖨️ Cetak Barcode
                                     </a>
                                     <Link
-                                        href={route('import.form')}
-                                        className="px-4 py-2 border border-blue-900 text-blue-900 rounded-lg hover:bg-blue-50 transition-colors text-sm font-medium text-center whitespace-nowrap"
-                                    >
-                                        📥 Import
-                                    </Link>
-                                    <Link
                                         href={route('kendaraan.create')}
                                         className="px-4 py-2 bg-blue-900 text-white rounded-lg hover:bg-blue-800 transition-colors text-sm font-medium text-center whitespace-nowrap"
                                     >

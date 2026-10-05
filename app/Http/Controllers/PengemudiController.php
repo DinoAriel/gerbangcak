@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Pengemudi;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\Encoders\JpegEncoder;
 use Intervention\Image\ImageManager;
 
 class PengemudiController extends Controller
@@ -14,16 +17,24 @@ class PengemudiController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
+        $status = $request->input('status');
 
         $pengemudis = Pengemudi::when($search, function ($query, $search) {
-            $query->where('nama', 'like', "%{$search}%")
+            $query->where(function ($q) use ($search) {
+                $q->where('nama', 'like', "%{$search}%")
                   ->orWhere('no_sim', 'like', "%{$search}%")
                   ->orWhere('no_ktp', 'like', "%{$search}%");
+            });
+        })->when($status, function ($query, $status) {
+            $query->where('status', $status);
         })->latest()->paginate(10)->withQueryString();
+
+        $statuses = Pengemudi::select('status')->distinct()->orderBy('status')->pluck('status');
 
         return Inertia::render('Pengemudi/Index', [
             'pengemudis' => $pengemudis,
-            'filters' => $request->only(['search']),
+            'statuses' => $statuses,
+            'filters' => $request->only(['search', 'status']),
         ]);
     }
 
@@ -52,9 +63,9 @@ class PengemudiController extends Controller
         ];
 
         if ($request->hasFile('foto')) {
-            [$binary, $mime] = $this->processImage($request->file('foto'));
-            $data['foto'] = $binary;
-            $data['foto_mime'] = $mime;
+            $path = 'foto/' . Str::uuid() . '.jpg';
+            Storage::disk('public')->put($path, $this->processImage($request->file('foto')));
+            $data['foto'] = $path;
         }
 
         Pengemudi::create($data);
@@ -89,9 +100,12 @@ class PengemudiController extends Controller
         ];
 
         if ($request->hasFile('foto')) {
-            [$binary, $mime] = $this->processImage($request->file('foto'));
-            $data['foto'] = $binary;
-            $data['foto_mime'] = $mime;
+            if ($pengemudi->foto) {
+                Storage::disk('public')->delete($pengemudi->foto);
+            }
+            $path = 'foto/' . Str::uuid() . '.jpg';
+            Storage::disk('public')->put($path, $this->processImage($request->file('foto')));
+            $data['foto'] = $path;
         }
 
         $pengemudi->update($data);
@@ -103,6 +117,9 @@ class PengemudiController extends Controller
     {
         if ($pengemudi->kendaraans()->count() > 0) {
             return back()->with('warning', 'Pengemudi masih terhubung ke kendaraan. Hapus relasi terlebih dahulu.');
+        }
+        if ($pengemudi->foto) {
+            Storage::disk('public')->delete($pengemudi->foto);
         }
         $pengemudi->delete();
 
@@ -117,25 +134,23 @@ class PengemudiController extends Controller
             abort(404);
         }
 
-        return response($pengemudi->foto)->header('Content-Type', $pengemudi->foto_mime ?? 'image/jpeg');
+        return redirect(Storage::url($pengemudi->foto));
     }
 
     /**
      * Resize and compress image to ~30 KB.
      *
-     * @return array{0: string, 1: string} [binary, mime]
+     * @return string encoded JPEG binary
      */
-    private function processImage(UploadedFile $file): array
+    private function processImage(UploadedFile $file): string
     {
         $manager = new ImageManager(new Driver);
-        $image = $manager->read($file->getPathname());
+        $image = $manager->decode($file->getPathname());
 
         // Resize to max 300x300 keeping aspect ratio
         $image->scaleDown(300, 300);
 
         // Encode as JPEG with quality 70 (approx 30KB)
-        $encoded = $image->toJpeg(70);
-
-        return [(string) $encoded, 'image/jpeg'];
+        return (string) $image->encode(new JpegEncoder(quality: 70));
     }
 }

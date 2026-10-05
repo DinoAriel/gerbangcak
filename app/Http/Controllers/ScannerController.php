@@ -3,16 +3,35 @@
 namespace App\Http\Controllers;
 
 use App\Models\Kendaraan;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class ScannerController extends Controller
 {
     /**
      * Handle the QR code scan.
+     *
+     * Route ini terbuka untuk publik (tanpa auth) agar pemindai QR yang belum login
+     * diarahkan ke halaman "Akses Terbatas", bukan error mentah. Data kendaraan
+     * hanya ditampilkan apabila pengguna merupakan admin/petugas.
      */
     public function scan($kode_unik)
     {
+        $user = request()->user();
+
+        // Publik / belum login -> halaman Akses Terbatas.
+        if (! $user) {
+            return Inertia::render('Scanner/AccessDenied', [
+                'kode' => $kode_unik,
+            ]);
+        }
+
+        // Login tetapi bukan admin/petugas -> tetap tolak.
+        if (! in_array($user->role, ['admin', 'petugas'])) {
+            return Inertia::render('Scanner/AccessDenied', [
+                'kode' => $kode_unik,
+            ]);
+        }
+
         $kendaraan = Kendaraan::with('pengemudis')->where('kode_unik', $kode_unik)->firstOrFail();
 
         // Format the drivers
@@ -35,7 +54,7 @@ class ScannerController extends Controller
                 'nama'       => $driver->nama,
                 'foto'       => $fotoUrl,
                 'sim'        => 'SIM ' . ($driver->no_sim ?? '-'),
-                'status'     => strtoupper($driver->status ?? 'AKTIF'),
+                'status'     => $isActive ? 'AKTIF' : 'TIDAK AKTIF',
                 'isActive'   => $isActive,
             ];
         });
@@ -47,7 +66,6 @@ class ScannerController extends Controller
             'brand' => $kendaraan->brand,
             'nomor_kendaraan' => $kendaraan->nomor_kendaraan,
             'tahun_pembuatan' => $kendaraan->tahun_pembuatan,
-            'masa_berlaku' => 'Aktif s/d ' . ($kendaraan->tahun_pembuatan + 5), // Example logic
             'drivers' => $drivers,
         ];
 

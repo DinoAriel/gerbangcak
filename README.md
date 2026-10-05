@@ -176,13 +176,12 @@ npm run build
 ## 📁 Struktur Role & Akses Halaman
 
 ```
-/ (root)              → Halaman Welcome (publik)
+/ (root)              → Redirect ke /login
 /dashboard            → Dashboard (semua user login)
 /pengemudi            → Manajemen Pengemudi (Admin only)
 /kendaraan            → Manajemen Kendaraan + Cetak QR (Admin only)
-/import               → Import Excel (Admin only)
 /petugas/scanner      → Kamera Live Scanner (Petugas only)
-/scan/{kode_unik}     → Hasil Scan Validasi (Admin & Petugas)
+/scan/{kode_unik}     → Hasil Scan Validasi (Admin & Petugas; publik diarahkan ke "Akses Terbatas")
 ```
 
 ---

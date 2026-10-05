@@ -13,20 +13,20 @@ export default function AuthenticatedLayout({ header, children }) {
     return (
         <div className="min-h-screen bg-gray-100">
             <nav className="border-b border-gray-100 bg-white">
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div className="flex h-16 justify-between">
-                        <div className="flex">
+                <div className="w-full px-6 sm:px-10">
+                    <div className="flex h-16 sm:h-20 justify-between items-center">
+                        <div className="flex items-center">
                             <div className="flex shrink-0 items-center">
                                 <Link href="/">
                                     <img
                                         src="/Juanda_International_Airport_Logo.png"
                                         alt="Logo Juanda International Airport"
-                                        className="h-9 w-auto object-contain"
+                                        className="h-9 sm:h-12 w-auto object-contain drop-shadow-sm"
                                     />
                                 </Link>
                             </div>
 
-                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex h-full items-center">
                                 <NavLink
                                     href={route('dashboard')}
                                     active={route().current('dashboard')}
@@ -109,7 +109,7 @@ export default function AuthenticatedLayout({ header, children }) {
                             <img
                                 src="/Juanda_International_Airport_Logo.png"
                                 alt="Logo Juanda International Airport"
-                                className="h-8 w-auto object-contain"
+                                className="h-9 w-auto object-contain drop-shadow-sm"
                             />
                             <button
                                 onClick={() =>
