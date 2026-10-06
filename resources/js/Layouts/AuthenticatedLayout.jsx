@@ -106,11 +106,6 @@ export default function AuthenticatedLayout({ header, children }) {
                         </div>
 
                         <div className="-me-2 flex items-center gap-2 sm:hidden">
-                            <img
-                                src="/Juanda_International_Airport_Logo.png"
-                                alt="Logo Juanda International Airport"
-                                className="h-9 w-auto object-contain drop-shadow-sm"
-                            />
                             <button
                                 onClick={() =>
                                     setShowingNavigationDropdown(
