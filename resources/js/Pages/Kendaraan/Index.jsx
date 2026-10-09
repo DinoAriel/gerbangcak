@@ -2,6 +2,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router } from '@inertiajs/react';
 import { useState, useEffect, useRef } from 'react';
 import Modal from '@/Components/Modal';
+import Pagination from '@/Components/Pagination';
 import { QRCodeSVG } from 'qrcode.react';
 
 export default function Index({ auth, kendaraans, flash, filters, kategoris }) {
@@ -148,32 +149,7 @@ export default function Index({ auth, kendaraans, flash, filters, kategoris }) {
                             </div>
 
                             {/* Pagination */}
-                            {kendaraans.links && kendaraans.links.length > 3 && (
-                                <div className="flex justify-center mt-6">
-                                    <ul className="flex space-x-1 border rounded-lg overflow-hidden border-gray-300">
-                                        {kendaraans.links.map((link, index) => (
-                                            <li key={index}>
-                                                {link.url ? (
-                                                    <Link
-                                                        href={link.url}
-                                                        className={`block px-4 py-2 text-sm font-medium transition-colors ${
-                                                            link.active
-                                                                ? 'bg-blue-900 text-white'
-                                                                : 'bg-white text-gray-700 border-x border-gray-200 hover:bg-blue-50'
-                                                        }`}
-                                                        dangerouslySetInnerHTML={{ __html: link.label }}
-                                                    />
-                                                ) : (
-                                                    <span
-                                                        className="block px-4 py-2 text-sm font-medium bg-gray-50 text-gray-400 border-x border-gray-200 cursor-not-allowed"
-                                                        dangerouslySetInnerHTML={{ __html: link.label }}
-                                                    />
-                                                )}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            )}
+                            <Pagination links={kendaraans.links} />
                         </div>
                     </div>
                 </div>
