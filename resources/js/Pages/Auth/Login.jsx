@@ -55,12 +55,12 @@ export default function Login({ status, canResetPassword }) {
                             <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-white shadow-xl shadow-blue-900/30 flex items-center justify-center mb-3 p-3">
                                 <img
                                     src="/logo.png"
-                                    alt="GerbangCak Logo"
+                                    alt="GerbangCek Logo"
                                     className="w-16 h-16 sm:w-20 sm:h-20 object-contain"
                                 />
                             </div>
                             <span className="text-xl sm:text-2xl font-bold tracking-tight text-white mb-5">
-                                GerbangCak
+                                GerbangCek
                             </span>
                             <p className="max-w-xs text-xs sm:text-sm text-blue-100 font-normal leading-relaxed text-balance opacity-95">
                                 Sistem verifikasi kendaraan dan pengemudi berbasis QR Code untuk mendukung keamanan operasional Bandara Juanda.

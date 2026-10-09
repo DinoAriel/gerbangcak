@@ -27,7 +27,7 @@ class PengemudiController extends Controller
             });
         })->when($status, function ($query, $status) {
             $query->where('status', $status);
-        })->latest()->paginate(10)->withQueryString();
+        })->latest()->orderBy('id', 'desc')->paginate(10)->withQueryString();
 
         $statuses = Pengemudi::select('status')->distinct()->orderBy('status')->pluck('status');
 
